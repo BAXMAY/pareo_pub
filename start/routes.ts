@@ -19,7 +19,28 @@
 */
 
 import Route from '@ioc:Adonis/Core/Route'
+import Database from '@ioc:Adonis/Lucid/Database'
 
-Route.get('/', async ({ view }) => {
-  return view.render('welcome')
+Route.get('/', (ctx) => {
+  ctx.response.redirect().status(301).toPath('/home')
+})
+
+Route.get('/leaders', async () => {
+  const leaders = await Database.query().from('leaders').select('*')
+  console.log(leaders)
+
+  return leaders
+})
+
+Route.get('/home', async ({ view }) => {
+  //  Call Api to get submit and unsubmit user
+  const unsubmitLeaders = await Database.query().from('leaders').where('isSubmit', false)
+  const submitLeaders = await Database.query().from('leaders').where('isSubmit', true)
+
+  const html = await view.render('home', {
+    unsubmitUsers: unsubmitLeaders,
+    submitUsers: submitLeaders,
+  })
+
+  return html
 })
