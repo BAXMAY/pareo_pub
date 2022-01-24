@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pareo |Submit the Stat|</title>
+    @entryPointStyles('app')
+    @entryPointScripts('app')
+  </head>
+  <body>
+    
+    <h1 class="title">Hurry Up!</h1>
+
+    @each((user, index) in unsubmitUsers)
+      <input onclick="submit(this)" type="checkbox" name={{ user.name }} id={{ user.id }} class="checkbox-input"/>
+      <label for={{ user.id }} class="checkbox-label">
+        <div class="checkbox-text">
+          {{--  <div style="width:320px; height:320px">  --}}
+            <img class="thumbnail" src={{ user.profileImg }} alt={{ user.name }}>
+          {{--  </div>  --}}
+          <p class="checkbox-text--title">{{ user.name }}</p>
+          <p class="checkbox-text--description">{{ user.care }}</p>
+        </div>
+      </label>
+    @endeach
+
+    <hr style="margin: 64px">
+    <h1 class="title">Congrats!</h1>
+
+    @each((user, index) in submitUsers)
+        <input onclick="unsubmit(this)" type="checkbox" name={{ user.name }} id={{ user.id }} class="checkbox-input"/>
+        <label for={{ user.id }} class="checkbox-label-congrats">
+          <div class="checkbox-text">
+            {{--  <div style="width:320px; height:320px">  --}}
+              <img class="thumbnail" src={{ user.profileImg }} alt={{ user.name }}>
+            {{--  </div>  --}}
+            <p class="checkbox-text--title">{{ user.name }}</p>
+            <p class="checkbox-text-congrats--description">{{ user.care }}</p>
+          </div>
+        </label>
+    @endeach
+
+    @if(auth.isLoggedIn)
+      <form onsubmit="return confirm('Do you really want to do that?');" action="{{ `/clear` }}" method="post">
+        {{ csrfField() }}
+        <button style="font-size: 36px; border-radius: 25px; background-color: red" type="submit">Clear All</button>
+      </form>
+    @endif
+
+  </body>
+  <script>
+    function submit(elem) {
+      console.log(elem.id)
+      if (confirm(`${elem.name}?`) == true) {
+        var xhr = new XMLHttpRequest()
+        var url = "/home";
+        xhr.open("POST", url, true);
+        xhr.setRequestHeader("Content-Type", "application/json");
+        xhr.onreadystatechange = function () {
+            if (xhr.readyState === 4 && xhr.status === 200) {
+                console.log('yes');
+                location.reload()
+            }
+        };
+        var data = JSON.stringify({"id": elem.id, "submit": true});
+        xhr.send(data);
+      } 
+      
+    }
+
+    function unsubmit(elem) {
+      console.log(elem.id)
+      if (confirm(`${elem.name}?`) == true) {
+        var xhr = new XMLHttpRequest()
+        var url = "/home";
+        xhr.open("POST", url, true);
+        xhr.setRequestHeader("Content-Type", "application/json");
+        xhr.onreadystatechange = function () {
+            if (xhr.readyState === 4 && xhr.status === 200) {
+              location.reload()
+            }
+        };
+        var data = JSON.stringify({"id": elem.id, "submit": false});
+        xhr.send(data);
+      } 
+      
+    }
+  </script>
+</html>
