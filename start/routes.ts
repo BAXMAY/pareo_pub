@@ -33,7 +33,7 @@ Route.get('/leaders', async () => {
   return leaders
 })
 
-Route.get('/home', async ({ auth, view }) => {
+Route.get('/home', async ({ view }) => {
   // await auth.use('web').authenticate()
   //  Call Api to get submit and unsubmit user
   const unsubmitLeaders = await Database.query().from('leaders').where('isSubmit', false)

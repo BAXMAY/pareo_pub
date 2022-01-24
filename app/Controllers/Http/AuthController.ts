@@ -22,7 +22,7 @@ export default class AuthController {
     return view.render('login')
   }
 
-  public async store({ auth, session, request, response }) {
+  public async store({ request, response }) {
     const data = request.only(['email', 'password'])
 
     Users.email = data.email
