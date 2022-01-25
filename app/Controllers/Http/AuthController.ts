@@ -4,22 +4,17 @@ import User from 'App/Models/users'
 const Users = new User()
 
 export default class AuthController {
-  // public async register({ request, auth, response }) {
-  //   let user = await Users.create(request.all())
-
-  //   let token = auth.generate(user)
-
-  //   Object.assign(user, token)
-
-  //   return response.json(user)
-  // }
-
   public async register({ view }) {
     return view.render('user/create')
   }
 
   public async login({ view }) {
     return view.render('login')
+  }
+
+  public async logout({ auth, response }) {
+    await auth.use('web').logout()
+    return response.redirect('/home')
   }
 
   public async store({ request, response }) {

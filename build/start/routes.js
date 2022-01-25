@@ -41,8 +41,9 @@ Route_1.default.post('/clear', async ({ auth, response }) => {
     await Database_1.default.from('leaders').update({ isSubmit: false, submitTime: null });
     return response.redirect().status(301).toPath('/home');
 });
-Route_1.default.get('/register', 'AuthController.register');
-Route_1.default.post('/register', 'AuthController.store');
+Route_1.default.get('/register', 'AuthController.register').middleware('auth');
+Route_1.default.post('/register', 'AuthController.store').middleware('auth');
 Route_1.default.get('/login', 'AuthController.login');
 Route_1.default.post('/login', 'AuthController.authenticate');
+Route_1.default.post('/logout', 'AuthController.logout');
 //# sourceMappingURL=routes.js.map

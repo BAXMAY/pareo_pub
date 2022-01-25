@@ -27,24 +27,52 @@
     <hr style="margin: 64px">
     <h1 class="title">Congrats!</h1>
 
-    @each((user, index) in submitUsers)
-        <input onclick="unsubmit(this)" type="checkbox" name={{ user.name }} id={{ user.id }} class="checkbox-input"/>
-        <label for={{ user.id }} class="checkbox-label-congrats">
-          <div class="checkbox-text">
-            {{--  <div style="width:320px; height:320px">  --}}
-              <img class="thumbnail" src={{ user.profileImg }} alt={{ user.name }}>
-            {{--  </div>  --}}
-            <p class="checkbox-text--title">{{ user.name }}</p>
-            <p class="checkbox-text-congrats--description">{{ user.care }}</p>
-          </div>
-        </label>
-    @endeach
-
     @if(auth.isLoggedIn)
+      @each((user, index) in submitUsers)
+          <input onclick="unsubmit(this)" type="checkbox" name={{ user.name }} id={{ user.id }} class="checkbox-input"/>
+          <label for={{ user.id }} class="checkbox-label-congrats">
+            <div class="checkbox-text">
+              {{--  <div style="width:320px; height:320px">  --}}
+                <img class="thumbnail" src={{ user.profileImg }} alt={{ user.name }}>
+              {{--  </div>  --}}
+              <p class="checkbox-text--title">{{ user.name }}</p>
+              <p class="checkbox-text-congrats--description">{{ user.care }}</p>
+            </div>
+          </label>
+      @endeach
+
       <form onsubmit="return confirm('Do you really want to do that?');" action="{{ `/clear` }}" method="post">
         {{ csrfField() }}
         <button style="font-size: 36px; border-radius: 25px; background-color: red" type="submit">Clear All</button>
       </form>
+
+      <br>
+
+      <form onsubmit="return confirm('Logout NOW?');" action="{{ `/logout` }}" method="post">
+        {{ csrfField() }}
+        <button style="font-size: 36px; border-radius: 25px; background-color: green" type="submit">Logout</button>
+      </form>    
+    @else
+
+      @each((user, index) in submitUsers)
+          <input type="checkbox" name={{ user.name }} id={{ user.id }} class="checkbox-input"/>
+          <label for={{ user.id }} class="checkbox-label-congrats">
+            <div class="checkbox-text">
+              {{--  <div style="width:320px; height:320px">  --}}
+                <img class="thumbnail" src={{ user.profileImg }} alt={{ user.name }}>
+              {{--  </div>  --}}
+              <p class="checkbox-text--title">{{ user.name }}</p>
+              <p class="checkbox-text-congrats--description">{{ user.care }}</p>
+            </div>
+          </label>
+      @endeach
+
+      <hr style="margin-bottom: 64px">
+
+      <form action="{{ `/login` }}" method="get">
+        {{ csrfField() }}
+        <button style="font-size: 18px; border-radius: 25px; color: white; background-color: blue" type="submit">Admin</button>
+      </form>    
     @endif
 
   </body>

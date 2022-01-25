@@ -12,6 +12,10 @@ class AuthController {
     async login({ view }) {
         return view.render('login');
     }
+    async logout({ auth, response }) {
+        await auth.use('web').logout();
+        return response.redirect('/home');
+    }
     async store({ request, response }) {
         const data = request.only(['email', 'password']);
         Users.email = data.email;

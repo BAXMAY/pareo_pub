@@ -82,7 +82,8 @@ Route.post('/clear', async ({ auth, response }) => {
 //   }
 // })
 
-Route.get('/register', 'AuthController.register')
-Route.post('/register', 'AuthController.store')
+Route.get('/register', 'AuthController.register').middleware('auth')
+Route.post('/register', 'AuthController.store').middleware('auth')
 Route.get('/login', 'AuthController.login')
 Route.post('/login', 'AuthController.authenticate')
+Route.post('/logout', 'AuthController.logout')
