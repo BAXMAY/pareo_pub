@@ -22,6 +22,22 @@ import Route from '@ioc:Adonis/Core/Route'
 import Database from '@ioc:Adonis/Lucid/Database'
 import { DateTime } from 'luxon'
 
+const isoStringToString = (isoString: string) => {
+  const dt = DateTime.fromISO(isoString)
+
+  if (!dt.isValid) {
+    return 'NaN'
+  }
+
+  return dt.toFormat('HH:mm')
+}
+
+const isLate = (isoString: string) => {
+  const submitTime = DateTime.fromISO(isoString)
+  const deadline = DateTime.fromFormat('18:00', 'HH:mm')
+  return submitTime > deadline
+}
+
 Route.get('/', (ctx) => {
   ctx.response.redirect().status(301).toPath('/home')
 })
@@ -36,12 +52,25 @@ Route.get('/leaders', async () => {
 Route.get('/home', async ({ view }) => {
   // await auth.use('web').authenticate()
   //  Call Api to get submit and unsubmit user
-  const unsubmitLeaders = await Database.query().from('leaders').where('isSubmit', false)
-  const submitLeaders = await Database.query().from('leaders').where('isSubmit', true)
+  const unsubmitLeaders = await Database.query()
+    .from('leaders')
+    .where('isSubmit', false)
+    .orderBy('name', 'asc')
+  const submitLeaders = await Database.query()
+    .from('leaders')
+    .where('isSubmit', true)
+    .orderBy('submitTime', 'asc')
+
+  const unsubmitLineNameList = await Database.query().from('leaders').select('line_name')
+  let reminderText =
+    '@' +
+    unsubmitLineNameList.map((record) => record.line_name).join(' @') +
+    ' อย่าลืมกรอกสต.นะค้าา'
 
   const html = await view.render('home', {
     unsubmitUsers: unsubmitLeaders,
     submitUsers: submitLeaders,
+    reminderText: reminderText,
   })
 
   return html
@@ -69,21 +98,73 @@ Route.post('/clear', async ({ auth, response }) => {
   return response.redirect().status(301).toPath('/home')
 })
 
-// Route.post('/login', async ({ auth, request, response }) => {
-//   const email = request.input('email')
-//   const password = request.input('password')
-//   const rememberMe = request.input('rememberMe')
-
-//   try {
-//     await auth.use('web').attempt(email, password, rememberMe)
-//     response.redirect('/hello')
-//   } catch {
-//     return response.badRequest('Invalid credentials')
-//   }
-// })
-
 Route.get('/register', 'AuthController.register').middleware('auth')
 Route.post('/register', 'AuthController.store').middleware('auth')
 Route.get('/login', 'AuthController.login')
 Route.post('/login', 'AuthController.authenticate')
 Route.post('/logout', 'AuthController.logout')
+
+Route.get('/admin', async ({ view }) => {
+  const leaders = await Database.query().from('leaders').select('*').orderBy('name', 'asc')
+
+  const feeLeaderArr: string[] = []
+
+  leaders.forEach((leader) => {
+    leader.isLate = isLate(leader.submitTime)
+    leader.submitTime = isoStringToString(leader.submitTime)
+    if (leader.isLate || leader.submitTime === 'NaN') feeLeaderArr.push(leader.line_name)
+  })
+
+  const feeMsg =
+    '@' +
+    feeLeaderArr.join(' @') +
+    ' \n\nค่าปรับคนละ 20 บาท\n\nโอนเข้าบัญชีส่วน\nไทยพาณิชย์\n412-065328-2'
+
+  const html = await view.render('admin', {
+    leaders: leaders,
+    feeMsg: feeMsg,
+  })
+
+  return html
+}).middleware('auth')
+
+Route.post('/createLeader', async ({ request, response }) => {
+  const name = request.input('name')
+  const care = request.input('care')
+  const line = request.input('line')
+
+  try {
+    await Database.table('leaders').insert({ name: name, care: care, line_name: line })
+  } catch {
+    return response.badRequest('Cannot create user')
+  }
+
+  return response.redirect().status(301).toPath('/admin')
+}).middleware('auth')
+
+Route.post('/deleteLeader/:id', async ({ request, response }) => {
+  await Database.from('leaders').where('id', request.param('id')).delete()
+
+  return response.redirect().status(301).toPath('/admin')
+}).middleware('auth')
+
+Route.post('/updateLeader/:id', async ({ request, response }) => {
+  const name = request.input('name')
+  const care = request.input('care')
+  const line = request.input('line')
+  const img = request.input('profileImg')
+
+  await Database.from('leaders')
+    .where('id', request.param('id'))
+    .update({ name: name, care: care, line_name: line, profileImg: img })
+
+  return response.redirect().status(301).toPath('/admin')
+}).middleware('auth')
+
+Route.get('/user/:id', async ({ request, view }) => {
+  const leader = await Database.query().from('leaders').where('id', request.param('id')).first()
+
+  const html = await view.render('edit', { leader: leader })
+
+  return html
+}).middleware('auth')

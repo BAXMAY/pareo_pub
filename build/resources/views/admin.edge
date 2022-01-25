@@ -1,0 +1,112 @@
+@layout('layouts.default')
+
+@section('content')
+  <section class="section">
+    <div class="container">
+      <div class="box">
+        <h1 class="title">
+          Manage Users
+          <p id="fee-text" hidden>{{ feeMsg }}</p>
+          <button class="button is-info" onclick="navigator.clipboard.writeText(document.getElementById('fee-text').textContent)"><i class="fas fa-money-bill-wave-alt"></i>&nbsp;Fee Message</button>
+        </h1>
+
+        <form action="/createLeader" method="POST">
+          {{ csrfField() }}
+          <div class="field is-horizontal">
+            <div class="field-body">
+              <div class="field">
+                <p class="control is-expanded has-icons-left">
+                  <input class="input" name="name" type="text" placeholder="Name">
+                  <span class="icon is-small is-left">
+                    <i class="fas fa-user"></i>
+                  </span>
+                </p>
+              </div>
+              <div class="field">
+                <p class="control is-expanded has-icons-left">
+                  <input class="input" name="care" type="text" placeholder="Structure">
+                  <span class="icon is-small is-left">
+                    <i class="fas fa-home"></i>
+                  </span>
+                </p>
+              </div>
+              <div class="field">
+                <p class="control is-expanded has-icons-left">
+                  <input class="input" name="line" type="text" placeholder="Line (Optional)">
+                  <span class="icon is-small is-left">
+                    <i class="fab fa-line"></i>
+                  </span>
+                </p>
+              </div>
+              <div class="columns is-mobile is-centered">
+                <div class="column is-narrow">
+                  <button class="button is-fullwidth is-success" type="submit"><i class="fas fa-plus"></i>&nbsp;Add</button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </form>
+
+        <div class="table-container" style="overflow-x: auto;">
+          <table class="table">
+            <thead>
+              <tr>
+                <th>#</th>
+                <th>Name</th>
+                <th>Structure</th>
+                <th>Done?</th>
+                <th>Time</th>
+                <th>Line</th>
+                <th>Menu</th>
+              </tr>
+            </thead>
+            <tfoot>
+              <tr>
+                <th>#</th>
+                <th>Name</th>
+                <th>Structure</th>
+                <th>Done?</th>
+                <th>Time</th>
+                <th>Line</th>
+                <th>Menu</th>
+              </tr>
+            </tfoot>
+            <tbody>
+              @each((leader, index) in leaders)
+              <tr>
+                <th>{{index + 1}}</th>
+                <td><a href="/user/{{ leader.id }}" title="{{ leader.name }}">{{ leader.name }}</a></td>
+                <td>{{leader.care}}</td>
+                <td>
+                  @if(leader.isSubmit)
+                    <i class="fas fa-check-double has-text-info"></i>
+                  @else
+                    <i class="fas fa-times has-text-danger"></i>
+                  @endif
+                </td>
+                <td>
+                  @if(leader.submitTime === 'NaN')
+                    <p class="has-text-dark">{{leader.submitTime}}</p>
+                  @elseif(leader.isLate)
+                    <p class="has-text-danger has-text-weight-bold">{{leader.submitTime}}</p>
+                  @else
+                    <p class="has-text-info has-text-weight-medium">{{leader.submitTime}}</p>
+                  @endif
+                </td>
+                <td>{{leader.line_name}}</td>
+                <td>
+                  <form action="/deleteLeader/{{ leader.id }}" method="POST">
+                    {{ csrfField() }}
+          
+                    <button class="button is-danger is-small" type="submit">Remove</button>
+                  </form>
+                </td>
+              </tr>
+              @endeach
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </section>
+@endsection

@@ -1,0 +1,80 @@
+@layout('layouts.default')
+
+@section('content')
+  <section class="section">
+    <div class="container">
+      <div class="box">
+
+        <h1 class="title">
+          <a href="/admin">
+            <button class="button is-primary">
+              <i class="fas fa-arrow-left"></i>
+            </button>
+          </a>
+          Edit User <span class="has-text-info">{{ leader.name }}</span>
+        </h1>
+        
+        <form action="/updateLeader/{{ leader.id }}" method="POST">
+          {{ csrfField() }}
+
+          <div class="columns">
+            <div class="column">
+              <div class="field">
+                <label class="label">Name</label>
+                <p class="control is-expanded has-icons-left">
+                  <input class="input" name="name" type="text" placeholder="Name" value="{{ leader.name }}">
+                  <span class="icon is-small is-left">
+                    <i class="fas fa-user"></i>
+                  </span>
+                </p>
+              </div>
+              <div class="field">
+                <label class="label">Structure</label>
+                <p class="control is-expanded has-icons-left">
+                  <input class="input" name="care" type="text" placeholder="Structure" value="{{ leader.care }}">
+                  <span class="icon is-small is-left">
+                    <i class="fas fa-home"></i>
+                  </span>
+                </p>
+              </div>
+              <div class="field">
+                <label class="label">Line</label>
+                <p class="control is-expanded has-icons-left">
+                  <input class="input" name="line" type="text" placeholder="Line" value="{{ leader.line_name }}">
+                  <span class="icon is-small is-left">
+                    <i class="fab fa-line"></i>
+                  </span>
+                </p>
+              </div>
+            </div>
+
+            @set('imgUrl', leader.profileImg)
+
+            <div class="column">
+              <figure class="image is-square">
+                <img src="{{ imgUrl }}" alt="Profile Img" style="border-radius: 24px;">
+              </figure>
+            </div>
+          </div>
+          <div class="field">
+            <label class="label">Profile Image</label>
+            <p class="control is-expanded has-icons-left">
+              <input class="input" name="profileImg" id="profileImg" type="text" placeholder="Image Url" value="{{ leader.profileImg }}">
+              <span class="icon is-small is-left">
+                <i class="fas fa-images"></i>
+              </span>
+            </p>
+          </div>
+
+          <div class="columns is-mobile">
+            <div class="column is-narrow">
+              <button class="button is-fullwidth is-primary" type="submit"><i class="fas fa-plus"></i>&nbsp;Update</button>
+            </div>
+          </div>
+
+        </form>
+
+      </div>
+    </div>
+  </section>
+@endsection
