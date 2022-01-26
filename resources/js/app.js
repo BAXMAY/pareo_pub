@@ -1,1 +1,1 @@
-import '../css/checkbox.css'
+import '../css/card.css'
