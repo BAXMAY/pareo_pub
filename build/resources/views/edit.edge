@@ -51,15 +51,15 @@
             @set('imgUrl', leader.profileImg)
 
             <div class="column">
-              <figure class="image is-square">
-                <img src="{{ imgUrl }}" alt="Profile Img" style="border-radius: 24px;">
+              <figure class="image">
+                <img src="{{ imgUrl }}" alt="Profile Img" id="profileImg" style="border-radius: 24px;width: 300px;">
               </figure>
             </div>
           </div>
           <div class="field">
             <label class="label">Profile Image</label>
             <p class="control is-expanded has-icons-left">
-              <input class="input" name="profileImg" id="profileImg" type="text" placeholder="Image Url" value="{{ leader.profileImg }}">
+              <input onchange="setDisplayImage(this)" class="input" name="profileImg" type="text" placeholder="Image Url" value="{{ leader.profileImg }}">
               <span class="icon is-small is-left">
                 <i class="fas fa-images"></i>
               </span>
@@ -76,5 +76,10 @@
 
       </div>
     </div>
+    <script>
+      function setDisplayImage(elem) {
+        document.getElementById('profileImg').src = elem.value
+      }
+    </script>
   </section>
 @endsection

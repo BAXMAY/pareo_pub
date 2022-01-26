@@ -95,7 +95,7 @@
                 </td>
                 <td>{{leader.line_name}}</td>
                 <td>
-                  <form action="/deleteLeader/{{ leader.id }}" method="POST">
+                  <form onsubmit="return confirm('Warning: this cannot be undone! Are you sure?');" action="/deleteLeader/{{ leader.id }}" method="POST">
                     {{ csrfField() }}
           
                     <button class="button is-danger is-small" type="submit">Remove</button>
