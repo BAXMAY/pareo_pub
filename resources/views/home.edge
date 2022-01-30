@@ -45,7 +45,38 @@
 
           <div class="block">
             <button class="button is-success" onclick="copyToClipboard()">Remind Message</button>
-          </div>  
+            
+            <div class="dropdown is-right">
+              <div class="dropdown-trigger">
+                <button class="button is-warning" aria-haspopup="true" aria-controls="dropdown-menu">
+                  <span class="icon is-small">
+                    <i class="fas fa-sort-amount-down-alt" aria-hidden="true"></i>
+                  </span>
+                </button>
+              </div>
+              <div class="dropdown-menu" id="dropdown-menu" role="menu">
+                <div class="dropdown-content">
+                  <div class="dropdown-item">
+                    <a href="/home/order_preference" class="dropdown-item">
+                      Default
+                    </a>                  
+                  </div>
+                  <hr class="dropdown-divider">
+                  <div class="dropdown-item">
+                    <a href="/home/name" class="dropdown-item">
+                      Name
+                    </a>
+                  </div>
+                  <hr class="dropdown-divider">
+                  <div class="dropdown-item">
+                    <a href="/home/care" class="dropdown-item">
+                      Care
+                    </a>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
         </div>
       </div>
       <div id="app" class="row columns is-multiline">
@@ -113,6 +144,12 @@
     
   </div>
   <script>
+    const dropdown = document.querySelector('.dropdown');
+    dropdown.addEventListener('click', function(event) {
+      event.stopPropagation();
+      dropdown.classList.toggle('is-active');
+    });
+
     function copyToClipboard() {
       const p = document.getElementById('unsubmit-reminder')//.innerHTML
       /* Copy the text inside the text field */

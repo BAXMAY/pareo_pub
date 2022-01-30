@@ -19,7 +19,7 @@
 */
 
 import Route from '@ioc:Adonis/Core/Route'
-import Database from '@ioc:Adonis/Lucid/Database'
+import Database, { ChainableContract, RawQuery } from '@ioc:Adonis/Lucid/Database'
 import { DateTime } from 'luxon'
 
 const isoStringToString = (isoString: string) => {
@@ -49,13 +49,30 @@ Route.get('/leaders', async () => {
   return leaders
 })
 
-Route.get('/home', async ({ view }) => {
+Route.get('/home/:orderBy?', async ({ params, view }) => {
   // await auth.use('web').authenticate()
   //  Call Api to get submit and unsubmit user
+  let orderField: string | ChainableContract | RawQuery
+
+  switch (params.orderBy) {
+    case 'name':
+      orderField = 'name'
+      break
+    case 'care':
+      orderField = 'care'
+      break
+    case 'order_preference':
+      orderField = 'order_preference'
+      break
+    default:
+      orderField = 'order_preference'
+      break
+  }
+
   const unsubmitLeaders = await Database.query()
     .from('leaders')
     .where('isSubmit', false)
-    .orderBy('name', 'asc')
+    .orderBy(orderField, 'asc')
   const submitLeaders = await Database.query()
     .from('leaders')
     .where('isSubmit', true)
@@ -104,8 +121,25 @@ Route.get('/login', 'AuthController.login')
 Route.post('/login', 'AuthController.authenticate')
 Route.post('/logout', 'AuthController.logout')
 
-Route.get('/admin', async ({ view }) => {
-  const leaders = await Database.query().from('leaders').select('*').orderBy('name', 'asc')
+Route.get('/admin/:orderBy?', async ({ params, view }) => {
+  let orderField: string | ChainableContract | RawQuery
+
+  switch (params.orderBy) {
+    case 'name':
+      orderField = 'name'
+      break
+    case 'care':
+      orderField = 'care'
+      break
+    case 'order_preference':
+      orderField = 'order_preference'
+      break
+    default:
+      orderField = 'order_preference'
+      break
+  }
+
+  const leaders = await Database.query().from('leaders').select('*').orderBy(orderField, 'asc')
 
   const feeLeaderArr: string[] = []
 
@@ -153,10 +187,11 @@ Route.post('/updateLeader/:id', async ({ request, response }) => {
   const care = request.input('care')
   const line = request.input('line')
   const img = request.input('profileImg')
+  const order = request.input('order')
 
   await Database.from('leaders')
     .where('id', request.param('id'))
-    .update({ name: name, care: care, line_name: line, profileImg: img })
+    .update({ name: name, care: care, line_name: line, profileImg: img, order_preference: order })
 
   return response.redirect().status(301).toPath('/admin')
 }).middleware('auth')

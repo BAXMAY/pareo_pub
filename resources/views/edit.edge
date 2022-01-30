@@ -20,6 +20,15 @@
           <div class="columns">
             <div class="column">
               <div class="field">
+                <label class="label">Order</label>
+                <p class="control is-expanded has-icons-left">
+                  <input class="input" name="order" type="number" placeholder="Order" value="{{ leader.order_preference }}">
+                  <span class="icon is-small is-left">
+                    <i class="fas fa-sort"></i>
+                  </span>
+                </p>
+              </div>
+              <div class="field">
                 <label class="label">Name</label>
                 <p class="control is-expanded has-icons-left">
                   <input class="input" name="name" type="text" placeholder="Name" value="{{ leader.name }}">
