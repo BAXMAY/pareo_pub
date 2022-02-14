@@ -23,7 +23,7 @@ import Database, { ChainableContract, RawQuery } from '@ioc:Adonis/Lucid/Databas
 import { DateTime } from 'luxon'
 
 const isoStringToString = (isoString: string) => {
-  const dt = DateTime.fromISO(isoString)
+  const dt = DateTime.fromISO(isoString).setZone('Asia/Bangkok')
 
   if (!dt.isValid) {
     return 'NaN'
@@ -33,8 +33,11 @@ const isoStringToString = (isoString: string) => {
 }
 
 const isLate = (isoString: string) => {
-  const submitTime = DateTime.fromISO(isoString)
-  const deadline = DateTime.fromFormat('18:00', 'HH:mm')
+  const submitTime = DateTime.fromISO(isoString).setZone('Asia/Bangkok')
+  const deadline = DateTime.fromFormat('18:00', 'HH:mm', {
+    setZone: true,
+    zone: 'Asia/Bangkok'
+  })
   return submitTime > deadline
 }
 
