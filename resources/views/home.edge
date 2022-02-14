@@ -34,8 +34,6 @@
             </form>
           </div>
         @endif
-
-        
       </div>
 
       <div class="columns">
@@ -44,7 +42,9 @@
           <p hidden id="unsubmit-reminder">{{ reminderText }}</p>
 
           <div class="block">
-            <button class="button is-success" onclick="copyToClipboard()">Remind Message</button>
+            <button class="button is-success" onclick="copyToClipboard()">Remind</button>
+            
+            <button class="button is-info" id="compact-btn" onclick="toggleMinimal()">Compact</button>
             
             <div class="dropdown is-right">
               <div class="dropdown-trigger">
@@ -79,17 +79,23 @@
           </div>
         </div>
       </div>
+
       <div id="app" class="row columns is-multiline">
         @each((user, index) in unsubmitUsers)
         <div key={{ user.name }} id={{ user.id }} onclick="submit(this, '{{user.name}}')" class="column is-4">
           <div class="card large">
-            <div class="card-image">
+            <div class="card-image toggle-minimal">
               <figure class="image is-square">
-                <img src="{{ user.profileImg }}" alt="{{ user.name }}">
+                <img class="image" src="{{ user.profileImg }}" alt="{{ user.name }}">
               </figure>
             </div>
-            <div class="card-content">
+            <div class="card-content full-size">
               <div class="media">
+                <div class="media-left" style="display: none;">
+                  <figure class="image is-64x64">
+                    <img src="{{ user.profileImg }}" alt="">
+                  </figure>
+                </div>
                 <div class="media-content">
                   <p class="title is-4 no-padding">{{ user.care }}</p>
                   <p>
@@ -150,6 +156,44 @@
       dropdown.classList.toggle('is-active');
     });
 
+    function toggleMinimal() {
+      const minimizables = document.getElementsByClassName('toggle-minimal');
+      const cardContents = document.getElementsByClassName('full-size');
+      const mediaLefts = document.getElementsByClassName('media-left');
+      const mediaContents = document.getElementsByClassName('media-content');
+      const compactBtn = document.getElementById('compact-btn');
+      if (compactBtn.innerHTML === 'Compact') {
+        for (var i=0; i < minimizables.length; i++) {
+          minimizables[i].style.display = "none";
+        }
+        for (var i=0; i < mediaLefts.length; i++) {
+          mediaLefts[i].style.display = "block";
+        }
+        for (var i=0; i < cardContents.length; i++) {
+          cardContents[i].classList.toggle("card-content")
+        }
+        for (var i=0; i < mediaContents.length; i++) {
+          mediaContents[i].classList.toggle("pt-2")
+        }
+        compactBtn.innerHTML = 'Fullsize'
+      }
+      else {
+        for (var i=0; i < minimizables.length; i++) {
+          minimizables[i].style.display = "block";
+        }
+        for (var i=0; i < mediaLefts.length; i++) {
+          mediaLefts[i].style.display = "none";
+        }
+        for (var i=0; i < cardContents.length; i++) {
+          cardContents[i].classList.toggle("card-content")
+        }
+        for (var i=0; i < cardContents.length; i++) {
+          mediaContents[i].classList.toggle("pt-2")
+        }
+        compactBtn.innerHTML = 'Compact'
+      }
+    }
+
     function copyToClipboard() {
       const p = document.getElementById('unsubmit-reminder')//.innerHTML
       /* Copy the text inside the text field */
@@ -192,6 +236,8 @@
       } 
       
     }
+
+    toggleMinimal()
   </script>
 </section>
 @endsection
