@@ -1,0 +1,94 @@
+LD
+A5:CJ14
+
+    Week
+    I:X Y:AN AO:BD BE:BT BU:CJ
+
+    S BT ATP C On PC CrC CrO 1:1 อร	อท พพช ปก ดว HA SA
+
+Member
+A5:CJ19
+
+    Week
+    I:X Y:AN AO:BD BE:BT BU:CJ
+
+    S BT ATP C On PC CrC CrO 1:1 อร	อท พพช ปก ดว HA SA
+
+ผช.2
+A24:CG38
+
+    Week
+    I:U Y:AK AO:BA BE:BQ BU:CG
+
+    S BT ATP C On PC CrC CrO ตตผ อท พพช HA SA
+
+ผช.1
+A43:CG62
+
+    Week
+    I:U Y:AK AO:BA BE:BQ BU:CG
+
+    S BT ATP C On PC CrC CrO ตตผ อท พพช HA SA
+
+สถ.
+A67:CG81
+
+    Week
+    I:T Y:AJ AO:AZ BE:BP BU:CF
+
+    S BT ATP C On PC CrC CrO ตตผ อท HA SA
+
+ผถ.
+A86:CG105
+
+    Week
+    I:T Y:AJ AO:AZ BE:BP BU:CF
+
+    S BT ATP C On PC CrC CrO ตตผ อท HA SA
+
+สจ.
+A110:CG124
+
+    Week
+    I:T Y:AJ AO:AZ BE:BP BU:CF
+
+    S BT ATP C On PC CrC CrO ตตผ อท HA SA
+
+สป.
+A129:CG143
+
+    Week
+    I:T Y:AJ AO:AZ BE:BP BU:CF
+
+    S BT ATP C On PC CrC CrO ตตผ อท HA SA
+
+สก.
+A148:CG157
+
+    Week
+    I:T Y:AJ AO:AZ BE:BP BU:CF
+
+    S BT ATP C On PC CrC CrO ตตผ อท HA SA
+
+พย.
+A162:CG171
+
+    Week
+    I:T Y:AJ AO:AZ BE:BP BU:CF
+
+    S BT ATP C On PC CrC CrO ตตผ อท HA SA
+
+คย.
+A176:CG185
+
+    Week
+    I:T Y:AJ AO:AZ BE:BP BU:CF
+
+    S BT ATP C On PC CrC CrO ตตผ อท HA SA
+
+money
+M188:P188
+AC188:AF188
+AS188:AV188
+BI188:BL188
+BY188:CB188
