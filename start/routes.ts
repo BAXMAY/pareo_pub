@@ -21,6 +21,7 @@
 import Route from '@ioc:Adonis/Core/Route'
 import Database, { ChainableContract, RawQuery } from '@ioc:Adonis/Lucid/Database'
 import { DateTime } from 'luxon'
+import { loadSpreadSheet, getSheetByName, manipulateSpreadsheet } from './spreadSheetManip'
 
 const isoStringToString = (isoString: string) => {
   const dt = DateTime.fromISO(isoString).setZone('Asia/Bangkok')
@@ -206,3 +207,46 @@ Route.get('/user/:id', async ({ request, view }) => {
 
   return html
 }).middleware('auth')
+
+Route.get('/structure/:sheetName/:nickname?', async ({ request }) => {
+  const sheetName = decodeURI(request.param('sheetName'))
+  const nickname = decodeURI(request.param('nickname'))
+  
+  const dataDict = await loadSpreadSheet()
+    .then((_) => getSheetByName(sheetName, nickname))
+    .catch((err) => console.log(err))
+  
+  return dataDict
+})
+
+Route.post('/structure/:id', async ({ request, response }) => {
+  const id = request.param('id')
+
+  //  Get all request input
+  const formData = request.body()
+
+  //  Construct dataDict
+  const dataDict = {
+    sheetName: formData.sheetName,
+    isLD: formData.isLD,
+    cellDict: {}
+  }
+
+  delete formData.sheetName
+  delete formData.isLD
+  delete formData._csrf
+
+  dataDict.cellDict = formData
+
+  //  Manip sheet
+  const result = await loadSpreadSheet().then( _ => manipulateSpreadsheet(dataDict)).catch(err => console.log(err))
+
+  if ( result === undefined ) {
+    return 'Something went wrong. Please contact Admin.'
+  }
+
+  let time = DateTime.now()
+  await Database.from('leaders').where('id', id).update({ isSubmit: true, submitTime: time })
+
+  return response.redirect().status(301).toPath('/home')
+})
