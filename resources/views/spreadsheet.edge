@@ -1,0 +1,22 @@
+@layout('layouts.default')
+
+@section('content')
+  <section class="section">
+    <div class="container">
+      <div class="box">
+
+        @each((userData, status) in dataDict)
+          <h3> {{ status }} </h3>
+          @each((criteriaDict, name) in userData)
+            <h4> {{ name }} </h4>
+            @each((data, criteria) in criteriaDict)
+              <li> {{ criteria }} in cell {{ data[0] }}, value {{ data[1] }} </li>
+            @end
+          @end
+        @end
+
+      </div>
+    </div>
+
+  </section>
+@endsection

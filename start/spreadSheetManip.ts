@@ -33,6 +33,18 @@ const SP_ROW_RANGE = [129, 143]
 const SK_ROW_RANGE = [148, 157]
 const PY_ROW_RANGE = [162, 171]
 const KY_ROW_RANGE = [176, 185]
+const NON_LD_RANGE = {
+    MB: MB_ROW_RANGE,
+    B2: B2_ROW_RANGE,
+    B1: B1_ROW_RANGE,
+    ST: ST_ROW_RANGE,
+    PT: PT_ROW_RANGE,
+    SJ: SJ_ROW_RANGE,
+    SP: SP_ROW_RANGE,
+    SK: SK_ROW_RANGE,
+    PY: PY_ROW_RANGE,
+    KY: KY_ROW_RANGE,
+}
 
 //  DATA LABELS
 //  S BT ATP C On PC CrC CrO 1:1 อร	อท พพช ปก ดว HA SA
@@ -42,6 +54,19 @@ const MB_DATA_LABELS = ['S', 'BT', 'ATP', 'C', 'ON', 'PC', 'CrC', 'CrO', 'TTP', 
 const BL_DATA_LABELS = ['S', 'BT', 'ATP', 'C', 'ON', 'PC', 'CrC', 'CrO', 'TTP', 'AT', 'PPCH', 'HA', 'SA']
 //  S BT ATP C On PC CrC CrO 1:1 อท HA SA
 const OTHERS_DATA_LABELS = ['S', 'BT', 'ATP', 'C', 'ON', 'PC', 'CrC', 'CrO', 'TTP', 'AT', 'HA', 'SA']
+
+const NON_LD_DATA_LABELS = {
+    MB: MB_DATA_LABELS,
+    B2: BL_DATA_LABELS,
+    B1: BL_DATA_LABELS,
+    ST: OTHERS_DATA_LABELS,
+    PT: OTHERS_DATA_LABELS,
+    SJ: OTHERS_DATA_LABELS,
+    SP: OTHERS_DATA_LABELS,
+    SK: OTHERS_DATA_LABELS,
+    PY: OTHERS_DATA_LABELS,
+    KY: OTHERS_DATA_LABELS,
+}
 
 const { GoogleSpreadsheet } = require('google-spreadsheet')
 const { DateTime } = require('luxon')
@@ -200,14 +225,55 @@ export async function getSheetByName(sheetName, nickname='undefined') {
 
         dataDict.LD = ldDataDict
     } else {
-        //  TO BE IMPLEMENTED
-        console.log('for non LD')
+        //  Check for row that has value
+        const hasValueRowDict = new Object()
+
+        for (const [position, range] of Object.entries(NON_LD_RANGE)) {
+
+            hasValueRowDict[position] = []
+
+            for (const row of _.range(range[0], range[1] + 1)) {
+                const cellName = NICKNAME_COL + row.toString()
+                const cell = sheet.getCellByA1(cellName)
+                if (cell.formattedValue !== null) {
+                    hasValueRowDict[position].push(row.toString())
+                }
+            }
+        }
+
+        // get criteria value of each row
+
+        for (const [position, hasValueRowList] of Object.entries(hasValueRowDict)) {
+
+            const nonLdDataDict = new Object()
+            const criteriaDict = new Object()
+
+            for (const row of hasValueRowList) {
+            
+                const criteriaList = []
+                for (let i = 0; i < NON_LD_DATA_LABELS[position].length; i++) {
+                    const colName = getColName(currentWeekCell.columnIndex + i)
+                    criteriaList.push(colName + row)
+                }
+                
+                for (const [i, cellName] of criteriaList.entries()) {
+                    criteriaDict[NON_LD_DATA_LABELS[position][i]] = [ cellName, sheet.getCellByA1(cellName).value ]
+                }
+    
+                nonLdDataDict[sheet.getCellByA1(NICKNAME_COL + row).formattedValue] = criteriaDict
+                
+            }
+
+            if (hasValueRowList.length > 0) {
+                dataDict[position] = nonLdDataDict
+            }
+        }
     }
 
     //  NOTE: for print the whole object
-    const util = require('util')
+    // const util = require('util')
 
-    console.log(util.inspect(dataDict, {showHidden: false, depth: null, colors: true}))
+    // console.log(util.inspect(dataDict, {showHidden: false, depth: null, colors: true}))
 
     return dataDict
 }

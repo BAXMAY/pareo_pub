@@ -208,15 +208,20 @@ Route.get('/user/:id', async ({ request, view }) => {
   return html
 }).middleware('auth')
 
-Route.get('/structure/:sheetName/:nickname?', async ({ request }) => {
+Route.get('/structure/:id/:sheetName/:nickname?', async ({ request, view }) => {
   const sheetName = decodeURI(request.param('sheetName'))
   const nickname = decodeURI(request.param('nickname'))
+  const id = decodeURI(request.param('id'))
   
   const dataDict = await loadSpreadSheet()
     .then((_) => getSheetByName(sheetName, nickname))
     .catch((err) => console.log(err))
+
+  delete dataDict.sunday
+
+  const html = await view.render('spreadsheet', { dataDict: dataDict })
   
-  return dataDict
+  return html
 })
 
 Route.post('/structure/:id', async ({ request, response }) => {
